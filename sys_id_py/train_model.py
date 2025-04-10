@@ -6,16 +6,16 @@ import torch
 import torch.nn as nn
 import yaml
 from torch.optim import Adam
-from filter_data import process_data
-from generate_predictions import generate_predictions
-from generate_inputs_errors import generate_inputs_errors
-from fetchparams.model_params import get_model_param
-from fetchparams.nn_params import get_nn_params
-from NN import NeuralNetwork
-from Pacejka.pacejka_formula import pacejka_formula
-from Pacejka.solve_pacejka import solve_pacejka
-from save_model import save
-from load_model import get_dotdict
+from sys_id_py.filter_data import process_data
+from sys_id_py.generate_predictions import generate_predictions
+from sys_id_py.generate_inputs_errors import generate_inputs_errors
+from sys_id_py.fetchparams.model_params import get_model_param
+from sys_id_py.fetchparams.nn_params import get_nn_params
+from sys_id_py.NN import NeuralNetwork
+from sys_id_py.Pacejka.pacejka_formula import pacejka_formula
+from sys_id_py.Pacejka.solve_pacejka import solve_pacejka
+from sys_id_py.save_model import save
+from sys_id_py.load_model import get_dotdict
 '''from helpers.plot_results import plot_results
 
 

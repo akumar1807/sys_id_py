@@ -13,7 +13,7 @@ from sensor_msgs.msg import Imu
 from ament_index_python.packages import get_package_share_directory
 from datetime import datetime
 from tqdm import tqdm
-from train_model import nn_train
+from sys_id_py.train_model import nn_train
 
 class OnTrackSysId(Node):
     def __init__(self):
