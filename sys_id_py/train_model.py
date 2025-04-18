@@ -173,6 +173,7 @@ def nn_train(training_data, racecar_version, plot_model):
     car_model.C_Pf = C_Pf_identified
     car_model.C_Pr = C_Pr_identified
     save(car_model)
+    print("Training complete!")
     
     ''' Generate Look-Up Table (LUT) with the updated model
     rclpy.get_logger().info("LUT is being generated...")

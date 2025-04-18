@@ -2,7 +2,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from Pacejka.pacejka_formula import pacejka_formula
+from sys_id_py.Pacejka.pacejka_formula import pacejka_formula
 
 def plot_results(model, v_x, v_y, omega, delta, C_Pf_identified, C_Pr_identified, iteration):
     """
