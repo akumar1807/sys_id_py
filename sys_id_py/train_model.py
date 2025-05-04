@@ -16,10 +16,8 @@ from sys_id_py.Pacejka.pacejka_formula import pacejka_formula
 from sys_id_py.Pacejka.solve_pacejka import solve_pacejka
 from sys_id_py.save_model import save
 from sys_id_py.load_model import get_dotdict
-'''from helpers.plot_results import plot_results
-
-
-from helpers.simulate_model import LookupGenerator'''
+from sys_id_py.plot_results import plot_results
+#from helpers.simulate_model import LookupGenerator
 import rclpy
 import ament_index_python
 import rospkg
@@ -159,9 +157,9 @@ def nn_train(training_data, racecar_version, plot_model):
                 print(f"C_Pf_identified at Iteration {i}:", C_Pf_identified)
                 print(f"C_Pr_identified at Iteration {i}:", C_Pr_identified)
                 
-                '''if plot_model:
+                if plot_model:
                     rclpy.get_logger().warn("Close the plot window (press Q) to continue... ")
-                    plot_results(model, v_x, v_y, omega, delta, C_Pf_identified, C_Pr_identified, i)'''   
+                    plot_results(model, v_x, v_y, omega, delta, C_Pf_identified, C_Pr_identified, i)
                     
                 # Update model with identified coefficients
                 model['C_Pf_model'] = C_Pf_identified

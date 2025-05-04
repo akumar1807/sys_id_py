@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import yaml
+import csv
 from ament_index_python.packages import get_package_share_directory
 from sys_id_py.collect_data_for_sys_id import DataLogger
 from sys_id_py.train_model import nn_train
@@ -32,5 +33,10 @@ class RegularSysID():
             self.nn_params = yaml.safe_load(file)
         
     def run_nn_train(self):
+        self.file = open('f1_training_data.csv', 'r')
+        self.dataset = csv.reader(self.file)
+        for data in self.dataset:
+            pass
+
         pass
 
