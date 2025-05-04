@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 import csv
+import numpy as np
 from std_msgs.msg import Float32
 from sensor_msgs.msg import Imu
 
@@ -15,9 +16,9 @@ class DataLogger(Node):
         self.steering = None
         self.imu_data = None
 
-        self.create_subscription(Float32, '/autodrive/f1_tenth_1/speed', self.speed_callback, 10)
-        self.create_subscription(Float32, '/autodrive/f1_tenth_1/steering', self.steering_callback, 10)
-        self.create_subscription(Imu, '/autodrive/f1_tenth_1/imu', self.imu_callback, 10)
+        self.create_subscription(Float32, '/autodrive/f1tenth_1/speed', self.speed_callback, 10)
+        self.create_subscription(Float32, '/autodrive/f1tenth_1/steering', self.steering_callback, 10)
+        self.create_subscription(Imu, '/autodrive/f1tenth_1/imu', self.imu_callback, 10)
 
     def speed_callback(self, msg):
         self.speed = msg.data

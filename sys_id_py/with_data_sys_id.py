@@ -33,10 +33,5 @@ class RegularSysID():
             self.nn_params = yaml.safe_load(file)
         
     def run_nn_train(self):
-        self.file = open('f1_training_data.csv', 'r')
-        self.dataset = csv.reader(self.file)
-        for data in self.dataset:
-            pass
-
         pass
 
