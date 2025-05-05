@@ -10,7 +10,7 @@ class DataLogger(Node):
         super().__init__('data_logger')
         self.file = open('f1_training_data.csv', 'w', newline='')
         self.writer = csv.writer(self.file)
-        self.writer.writerow(['time', 'speed', 'steering', 'imu_ax', 'imu_ay', 'imu_az', 'imu_yaw_rate'])
+        self.writer.writerow(['time', 'speed', 'steering', 'x_angle', 'y_angle', 'z_angle', 'imu_yaw_rate'])
 
         self.speed = None
         self.steering = None
@@ -39,9 +39,9 @@ class DataLogger(Node):
                 timestamp,
                 self.speed,
                 self.steering,
-                self.imu_data.linear_acceleration.x,
-                self.imu_data.linear_acceleration.y,
-                self.imu_data.linear_acceleration.z,
+                self.imu_data.orientation.x,
+                self.imu_data.orientation.y,
+                self.imu_data.orientation.z,
                 self.imu_data.angular_velocity.z
             ])
 

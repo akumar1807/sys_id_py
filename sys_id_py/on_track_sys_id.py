@@ -24,9 +24,9 @@ class OnTrackSysId(Node):
             parameters=[
                 ('racecar_version', 'default_version'),
                 ('odom_topic', '/car_state/odom'),
-                ('speed_topic', '/autodrive/f1_tenth_1/speed'),
-                ('steering_angle_topic', '/autodrive/f1_tenth_1/steering'),
-                ('imu_topic', '/autodrive/f1_tenth_1/imu'),
+                ('speed_topic', '/autodrive/f1tenth_1/speed'),
+                ('steering_angle_topic', '/autodrive/f1tenth_1/steering'),
+                ('imu_topic', '/autodrive/f1tenth_1/imu'),
                 ('ackermann_cmd_topic', '/vesc/high_level/ackermann_cmd_mux/input/nav_1'),
                 ('save_LUT_name', 'default_lut'),
                 ('plot_model', False)
