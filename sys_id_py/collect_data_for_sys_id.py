@@ -33,7 +33,7 @@ class DataLogger(Node):
         self.log_data()
 
     def log_data(self):
-        if self.speed is not None and self.steering is not None and self.imu_data is not None:
+        if self.speed is not None and self.steering is not None and self.imu_data is not None and self.speed > 0.001:
             timestamp = self.get_clock().now().to_msg().sec + self.get_clock().now().to_msg().nanosec * 1e-9
             self.writer.writerow([
                 timestamp,

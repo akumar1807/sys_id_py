@@ -14,18 +14,28 @@ class RegularSysID():
             print(f"Error: Could not find package 'sys_id_py'")
             return
         self.rate = 50
+        self.model_version = 'SIM'
+        self.plot_model = True
         self.load_parameters()
         self.setup_data_storage()
-        self.timer = self.create_timer(1.0 / self.rate, self.collect_data)
+        #self.timer = self.create_timer(1.0 / self.rate, self.collect_data)
 
         pass
     
     def setup_data_storage(self):
-        self.data_duration = self.nn_params['data_collection_duration']
-        self.timesteps = self.data_duration * self.rate
-        self.data = np.zeros((self.timesteps, 4))
-        self.counter = 0
-        self.current_state = np.zeros(4)
+        '''self.data_duration = self.nn_params['data_collection_duration']
+        self.timesteps = self.data_duration * self.rate'''
+        self.file = open("f1_training_data.csv", 'r')
+        speed_x = np.array([])
+        speed_y = np.array([])
+        steering_angle = np.array([])
+        omega = np.array([])
+        for lines in self.file:
+            speed_x = np.append(speed_x, (lines[1]*np.cos(lines[3])))
+            speed_y = np.append(speed_y, (lines[1]*np.cos(lines[4])))
+            steering_angle = np.append(steering_angle,lines[2])
+            omega = np.append(omega, lines[6])
+        self.dataset = np.array([speed_x, speed_y, steering_angle, omega])
 
     def load_parameters(self):
         yaml_file = os.path.join(self.package_path, 'params/nn_params.yaml')
@@ -33,5 +43,12 @@ class RegularSysID():
             self.nn_params = yaml.safe_load(file)
         
     def run_nn_train(self):
-        pass
+        print("Begin Training")
+        nn_train(self.dataset, self.model_version, self.plot_model)
+        
+def main():
+    sysid = RegularSysID()
+    sysid.run_nn_train()
 
+if __name__ == '__main__':
+    main()
