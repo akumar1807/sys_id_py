@@ -3,7 +3,7 @@ import os
 import yaml
 import csv
 from ament_index_python.packages import get_package_share_directory
-from sys_id_py.collect_data_for_sys_id import DataLogger
+#from collect_data_for_sys_id import DataLogger
 from sys_id_py.train_model import nn_train
 
 class RegularSysID():
@@ -25,20 +25,24 @@ class RegularSysID():
     def setup_data_storage(self):
         '''self.data_duration = self.nn_params['data_collection_duration']
         self.timesteps = self.data_duration * self.rate'''
-        self.file = open("f1_training_data.csv", 'r')
+        self.file = open("src/sys_id_py/f1_training_data.csv", 'r')
         speed_x = np.array([])
         speed_y = np.array([])
         steering_angle = np.array([])
         omega = np.array([])
+        count = 0
+        next(self.file) #Skips header row
         for lines in self.file:
-            speed_x = np.append(speed_x, (lines[1]*np.cos(lines[3])))
-            speed_y = np.append(speed_y, (lines[1]*np.cos(lines[4])))
-            steering_angle = np.append(steering_angle,lines[2])
-            omega = np.append(omega, lines[6])
-        self.dataset = np.array([speed_x, speed_y, steering_angle, omega])
+            speed_x = np.append(speed_x, (float(lines[1])*np.cos(float(lines[3]))))
+            speed_y = np.append(speed_y, (float(lines[1])*np.cos(float(lines[4]))))
+            steering_angle = np.append(steering_angle,float(lines[2]))
+            omega = np.append(omega, float(lines[6]))        
+        #print(speed_x.reshape(-1,1))
+        self.dataset = np.array([speed_x, speed_y, steering_angle, omega]).T
+        print(self.dataset.shape)
 
     def load_parameters(self):
-        yaml_file = os.path.join(self.package_path, 'params/nn_params.yaml')
+        yaml_file = os.path.join('src/sys_id_py/params/nn_params.yaml')
         with open(yaml_file, 'r') as file:
             self.nn_params = yaml.safe_load(file)
         

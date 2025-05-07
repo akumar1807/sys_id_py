@@ -22,7 +22,7 @@ setup(
         'console_scripts': [
             'on_track_sys_id = sys_id_py.on_track_sys_id:main',
             'collect_data = sys_id_py.collect_data_for_sys_id:main',
-            'regular_sys_id = sys_id_py.with_data_sys_id:main'
+            'with_data_sys_id = sys_id_py.with_data_sys_id:main'
         ],
     },
 )

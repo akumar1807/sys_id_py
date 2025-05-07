@@ -1,26 +1,23 @@
 #Taken from ETH Repo and modified
-import os
 import numpy as np
-import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
-import yaml
 from torch.optim import Adam
 from sys_id_py.filter_data import process_data
 from sys_id_py.generate_predictions import generate_predictions
 from sys_id_py.generate_inputs_errors import generate_inputs_errors
-from sys_id_py.fetchparams.model_params import get_model_param
-from sys_id_py.fetchparams.nn_params import get_nn_params
+from sys_id_py.model_params import get_model_param
+from sys_id_py.nn_params import get_nn_params
 from sys_id_py.NN import NeuralNetwork
-from sys_id_py.Pacejka.pacejka_formula import pacejka_formula
-from sys_id_py.Pacejka.solve_pacejka import solve_pacejka
+from sys_id_py.pacejka_formula import pacejka_formula
+from sys_id_py.solve_pacejka import solve_pacejka
 from sys_id_py.save_model import save
 from sys_id_py.load_model import get_dotdict
 from sys_id_py.plot_results import plot_results
 #from helpers.simulate_model import LookupGenerator
 import rclpy
 import ament_index_python
-import rospkg
+#import rospkg
 from tqdm import tqdm
 
 def simulated_data_gen(nn_model, model, avg_vel):
@@ -128,7 +125,7 @@ def nn_train(training_data, racecar_version, plot_model):
         X_train, y_train = generate_training_set(training_data, model)
         
         # Initialize the network
-        nn_model = NeuralNetwork(weight_decay = weight_decay)
+        nn_model = NeuralNetwork()
 
         # Loss and optimizer
         criterion = nn.MSELoss()
@@ -158,7 +155,7 @@ def nn_train(training_data, racecar_version, plot_model):
                 print(f"C_Pr_identified at Iteration {i}:", C_Pr_identified)
                 
                 if plot_model:
-                    rclpy.get_logger().warn("Close the plot window (press Q) to continue... ")
+                    #rclpy.get_logger().warn("Close the plot window (press Q) to continue... ")
                     plot_results(model, v_x, v_y, omega, delta, C_Pf_identified, C_Pr_identified, i)
                     
                 # Update model with identified coefficients

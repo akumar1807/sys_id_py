@@ -9,11 +9,17 @@ class NeuralNetwork(nn.Module):
         self.l1 = nn.Linear(4,8) #Input Layer
         self.hl1 = nn.Linear(8, 8) # First hidden layer
         self.l2 = nn.Linear(8, 2) # Output layer
+        self.relu = nn.ReLU()
 
     def forward(self, x):
-        x = nn.ReLU(self.l1(x))
-        x = nn.ReLU(self.hl1(x))
-        return self.l2(x)
+        #x = nn.ReLU(self.l1(x))
+        x = self.l1(x) #x is now a tensor
+        x = self.relu(x) #Apply activation to tensor x
+        #x = nn.ReLU(self.hl1(x))
+        x = self.hl1(x) #Pass to hidden layer
+        x = self.relu(x) #Apply activation
+        x = self.l2(x) 
+        return x
     
     def initialise_weights(self):
         for layer in model.modules():
@@ -22,4 +28,4 @@ class NeuralNetwork(nn.Module):
                         nn.init.zeros_(layer.bias)
 
 model = NeuralNetwork()
-print(model)
+#print(model)

@@ -1,13 +1,14 @@
 #Taken from ETH Repo and modified
 import yaml
 import os
-from dotdict import DotDict
+from sys_id_py.dotdict import DotDict
 import rospkg
 
 def get_dict(model_name):
     model, tire = model_name.split("_")
     rospack = rospkg.RosPack()
-    package_path = rospack.get_path('sys_id_py')
+    #package_path = rospack.get_path('sys_id_py')
+    package_path = 'src/sys_id_py'
     """with open(f'{package_path}/models/{model}/{model_name}.txt', 'rb') as f:
         params = yaml.load(f, Loader=yaml.Loader)"""
     with open(f'{package_path}/models/car_parameters.txt', 'rb') as f:

@@ -5,11 +5,13 @@ from rclpy.node import Node
 from ament_index_python.packages import get_package_share_directory
 
 def save(model, overwrite_existing=True, verbose=False):
-    try:
-        package_path = get_package_share_directory('Pacejka_NN')
+    '''try:
+        package_path = get_package_share_directory('sys_id_py')
     except Exception as e:
-        print(f"Error: Could not find package 'Pacejka_NN'. {e}")
-        return
+        print(f"Error: Could not find package 'sys_id_py'. {e}")
+        return'''
+    
+    package_path = 'src/sys_id_py'
     
     file_path = os.path.join(package_path, "models", model['model_name'], f"{model['model_name']}_{model['tire_model']}.txt")
     
