@@ -3,29 +3,32 @@ from rclpy.node import Node
 import csv
 import numpy as np
 from std_msgs.msg import Float32
+from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
+from geometry_msgs.msg import Twist
 
 class DataLogger(Node):
     def __init__(self):
         super().__init__('data_logger')
-        self.file = open('f1_training_data.csv', 'w', newline='')
+        self.file = open('jetson_training_data.csv', 'w', newline='')
         self.writer = csv.writer(self.file)
-        self.writer.writerow(['time', 'speed', 'steering', 'x_angle', 'y_angle', 'z_angle', 'imu_yaw_rate'])
+        self.writer.writerow(['time', 'speed_x', 'speed_y', 'omega', 'steering_angle'])
 
         self.speed = None
         self.steering = None
         self.imu_data = None
 
-        self.create_subscription(Float32, '/autodrive/f1tenth_1/speed', self.speed_callback, 10)
-        self.create_subscription(Float32, '/autodrive/f1tenth_1/steering', self.steering_callback, 10)
-        self.create_subscription(Imu, '/autodrive/f1tenth_1/imu', self.imu_callback, 10)
-
-    def speed_callback(self, msg):
-        self.speed = msg.data
+        self.create_subscription(Float32, '/odom', self.odom_callback, 10)
+        self.create_subscription(Float32, '/drive', self.steering_callback, 10)
+        
+    def odom_callback(self, msg):
+        self.speed_x = msg.twist.twist.linear.x
+        self.speed_y = msg.twist.twist.linear.y
+        self.omega = msg.twist.twist.angular.z
         self.log_data()
 
     def steering_callback(self, msg):
-        self.steering = msg.data
+        self.steering = msg.drive.steering_angle
         self.log_data()
 
     def imu_callback(self, msg):
@@ -37,12 +40,10 @@ class DataLogger(Node):
             timestamp = self.get_clock().now().to_msg().sec + self.get_clock().now().to_msg().nanosec * 1e-9
             self.writer.writerow([
                 timestamp,
-                self.speed,
+                self.speed_x,
+                self.speed_y,
                 self.steering,
-                self.imu_data.orientation.x,
-                self.imu_data.orientation.y,
-                self.imu_data.orientation.z,
-                self.imu_data.angular_velocity.z
+                self.omega
             ])
 
 def main(args=None):
