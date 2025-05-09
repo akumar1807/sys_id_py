@@ -7,16 +7,17 @@ from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Twist
 
-class DataLogger(Node):
+class JetsonDataLogger(Node):
     def __init__(self):
         super().__init__('data_logger')
         self.file = open('jetson_training_data.csv', 'w', newline='')
         self.writer = csv.writer(self.file)
         self.writer.writerow(['time', 'speed_x', 'speed_y', 'omega', 'steering_angle'])
 
-        self.speed = None
+        self.speed_x = None
+        self.speed_y = None
+        self.omega = None
         self.steering = None
-        self.imu_data = None
 
         self.create_subscription(Float32, '/odom', self.odom_callback, 10)
         self.create_subscription(Float32, '/drive', self.steering_callback, 10)
@@ -29,10 +30,6 @@ class DataLogger(Node):
 
     def steering_callback(self, msg):
         self.steering = msg.drive.steering_angle
-        self.log_data()
-
-    def imu_callback(self, msg):
-        self.imu_data = msg
         self.log_data()
 
     def log_data(self):
@@ -48,7 +45,7 @@ class DataLogger(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = DataLogger()
+    node = JetsonDataLogger()
     rclpy.spin(node)
     node.file.close()
     node.destroy_node()
