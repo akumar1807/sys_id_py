@@ -14,9 +14,8 @@ from sys_id_py.solve_pacejka import solve_pacejka
 from sys_id_py.save_model import save
 from sys_id_py.load_model import get_dotdict
 from sys_id_py.plot_results import plot_results
-#from helpers.simulate_model import LookupGenerator
+from sys_id_py.gen_LUT import LookupGenerator
 import rclpy
-import ament_index_python
 #import rospkg
 from tqdm import tqdm
 
@@ -168,8 +167,10 @@ def nn_train(training_data, racecar_version, plot_model):
     car_model.C_Pf = C_Pf_identified
     car_model.C_Pr = C_Pr_identified
     save(car_model)
+    save_LUT_name = model_name + "_LUT"
     print("Training complete!")
     
-    ''' Generate Look-Up Table (LUT) with the updated model
-    rclpy.get_logger().info("LUT is being generated...")
-    LookupGenerator(racecar_version, save_LUT_name).run_generator()'''
+    ''' Generate Look-Up Table (LUT) with the updated model'''
+
+    print("LUT is being generated...")
+    LookupGenerator(racecar_version, save_LUT_name).run_generator()
