@@ -34,18 +34,15 @@ class JetsonDataLogger(Node):
         self.log_data()
 
     def log_data(self):
-        if self.speed is not None and self.steering is not None and self.imu_data is not None and self.speed > 0.0:
-            counter = 0
-            #timestamp = self.get_clock().now().to_msg().sec + self.get_clock().now().to_msg().nanosec * 1e-9
-            while counter < 1000:
-                self.writer.writerow([
-                    float(self.speed_x),
-                    float(self.speed_y),
-                    float(self.steering),
-                    float(self.omega)
+        if self.speed_x is not None and self.steering is not None and self.speed_x > 0.0:
+            self.writer.writerow([
+                    abs(float(self.speed_x)),
+                    abs(float(self.speed_y)),
+                    abs(float(self.steering)),
+                    abs(float(self.omega))
                 ])
-                counter += 1
-        self.get_logger().info("Data Collected")
+            #timestamp = self.get_clock().now().to_msg().sec + self.get_clock().now().to_msg().nanosec * 1e-9
+            
 def main(args=None):
     rclpy.init(args=args)
     node = JetsonDataLogger()
