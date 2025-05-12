@@ -23,19 +23,10 @@ class JetsonSysID():
         '''self.data_duration = self.nn_params['data_collection_duration']
         self.timesteps = self.data_duration * self.rate'''
         self.file = open("src/sys_id_py/jetson_training_data.csv", 'r')
-        speed_x = np.array([])
-        speed_y = np.array([])
-        steering_angle = np.array([])
-        omega = np.array([])
-        count = 0
         next(self.file) #Skips header row
         for lines in self.file:
-            speed_x = np.append(speed_x, float(lines[1]))
-            speed_y = np.append(speed_y, float(lines[2]))
-            steering_angle = np.append(steering_angle,float(lines[3]))
-            omega = np.append(omega, float(lines[4]))        
+            self.dataset = np.append(self.dataset, lines)       
         #print(speed_x.reshape(-1,1))
-        self.dataset = np.array([speed_x, speed_y, omega, steering_angle]).T
         #print(self.dataset.shape)
 
     def load_parameters(self):

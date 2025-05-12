@@ -19,8 +19,6 @@ class RegularSysID():
         self.load_parameters()
         self.setup_data_storage()
         #self.timer = self.create_timer(1.0 / self.rate, self.collect_data)
-
-        pass
     
     def setup_data_storage(self):
         '''self.data_duration = self.nn_params['data_collection_duration']

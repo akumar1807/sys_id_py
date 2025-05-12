@@ -1,7 +1,6 @@
 import rclpy
 from rclpy.node import Node
 import csv
-import numpy as np
 from std_msgs.msg import Float32
 from sensor_msgs.msg import Imu
 
@@ -33,25 +32,29 @@ class DataLogger(Node):
         self.log_data()
 
     def log_data(self):
+        timesteps = 0 
         if self.speed is not None and self.steering is not None and self.imu_data is not None and self.speed > 0.0:
-            timestamp = self.get_clock().now().to_msg().sec + self.get_clock().now().to_msg().nanosec * 1e-9
-            self.writer.writerow([
-                timestamp,
-                self.speed,
-                self.steering,
-                self.imu_data.orientation.x,
-                self.imu_data.orientation.y,
-                self.imu_data.orientation.z,
-                self.imu_data.angular_velocity.z
-            ])
+            while timesteps < 750:
+                timestamp = self.get_clock().now().to_msg().sec + self.get_clock().now().to_msg().nanosec * 1e-9
+                self.writer.writerow([
+                    timestamp,
+                    self.speed,
+                    self.steering,
+                    self.imu_data.orientation.x,
+                    self.imu_data.orientation.y,
+                    self.imu_data.orientation.z,
+                    self.imu_data.angular_velocity.z
+                ])
+                timesteps += 1
+        print("Data Collected")
+        self.file.close()
+        self.destroy_node()
+        rclpy.shutdown()
 
 def main(args=None):
     rclpy.init(args=args)
     node = DataLogger()
     rclpy.spin(node)
-    node.file.close()
-    node.destroy_node()
-    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
