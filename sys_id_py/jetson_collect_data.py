@@ -37,7 +37,7 @@ class JetsonDataLogger(Node):
         self.timesteps = self.data_collection_duration*self.rate
         self.dataset = np.zeros((self.timesteps,4))
         self.current_state = np.zeros(4)
-        self.count = 0
+        self.counter = 0
 
     def odom_callback(self, msg):
         self.current_state[0] = msg.twist.twist.linear.x
@@ -62,7 +62,7 @@ class JetsonDataLogger(Node):
                 self.counter += 1
             if self.counter == self.timesteps + 1:
                 self.get_logger().info("Data collection completed.")
-                self.export_data_as_csv()
+                
 
     def export_data_as_csv(self):
         ch = input("Save data to csv? (y/n): ")
@@ -82,9 +82,10 @@ class JetsonDataLogger(Node):
         while rclpy.ok():
             self.get_logger().info("Collecting Data")
             self.collect_data()
-            self.file.close()
-            rclpy.shutdown()
-            self.rate.sleep()
+            if self.counter == self.timesteps + 1:
+                self.export_data_as_csv()
+                self.file.close()
+                rclpy.shutdown()
 
 def main(args=None):
     rclpy.init(args=args)
