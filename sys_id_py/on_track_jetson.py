@@ -27,7 +27,6 @@ class sys_id_for_jetson(Node):
         #Subscriptions
         self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
         self.create_subscription(AckermannDriveStamped, '/drive', self.steering_callback, 10)
-        pass
 
     def load_parameters(self):
         yaml_file = os.path.join('src/sys_id_py/params/nn_params.yaml')

@@ -1,7 +1,10 @@
 import rclpy
 from rclpy.node import Node
 import csv
+import yaml
+import os
 import numpy as np
+import rospkg
 from std_msgs.msg import Float32
 from nav_msgs.msg import Odometry
 from ackermann_msgs.msg import AckermannDriveStamped
@@ -11,45 +14,84 @@ from geometry_msgs.msg import Twist
 class JetsonDataLogger(Node):
     def __init__(self):
         super().__init__('data_logger')
-        self.file = open('jetson_training_data.csv', 'w', newline='')
+        rospack = rospkg.RosPack()
+        self.package_path = rospack.get_path('sys_id_py')
+        self.racecar_version = "JETSON"
+        self.file = open(f'{self.racecar_version}_training_data.csv', 'w', newline='')
         self.writer = csv.writer(self.file)
         self.writer.writerow(['speed_x', 'speed_y', 'omega', 'steering_angle'])
 
-        self.speed_x = None
-        self.speed_y = None
-        self.omega = None
-        self.steering = None
+        self.data_collection_duration = self.nn_params['data_collection_duration']
+        self.rate = 40
+
+        self.load_parameters()
+        self.storage_setup()
 
         self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
         self.create_subscription(AckermannDriveStamped, '/drive', self.steering_callback, 10)
         
+    def load_parameters(self):
+        yaml_file = os.path.join('src/sys_id_py/params/nn_params.yaml')
+        with open(yaml_file, 'r') as file:
+            self.nn_params = yaml.safe_load(file)
+
+    def storage_setup(self):
+        self.timesteps = self.data_collection_duration*self.rate
+        self.dataset = np.zeros((self.timesteps,4))
+        self.current_state = np.zeros(4)
+        self.count = 0
+
     def odom_callback(self, msg):
-        self.speed_x = msg.twist.twist.linear.x
-        self.speed_y = msg.twist.twist.linear.y
-        self.omega = msg.twist.twist.angular.z
-        self.log_data()
+        self.current_state[0] = msg.twist.twist.linear.x
+        self.current_state[1] = msg.twist.twist.linear.y
+        self.current_state[2] = msg.twist.twist.angular.z
+        self.collect_data()
 
     def steering_callback(self, msg):
         self.steering = msg.drive.steering_angle
-        self.log_data()
+        self.collect_data()
 
-    def log_data(self):
-        if self.speed_x is not None and self.steering is not None and self.speed_x > 0.0:
-            self.writer.writerow([
-                    abs(float(self.speed_x)),
-                    abs(float(self.speed_y)),
-                    abs(float(self.steering)),
-                    abs(float(self.omega))
-                ])
-            #timestamp = self.get_clock().now().to_msg().sec + self.get_clock().now().to_msg().nanosec * 1e-9
-            
+    def collect_data(self):
+            """
+            Collects data during simulation.
+
+            Adds the current state to the data array and updates the counter.
+            Closes the progress bar and logs a message if data collection is complete.
+            """
+            if self.current_state[0] > 0.0: # Only collect data when the car is moving
+                self.data = np.roll(self.data, -1, axis=0)
+                self.data[-1] = self.current_state
+                self.counter += 1
+            if self.counter == self.timesteps + 1:
+                self.get_logger().info("Data collection completed.")
+                self.export_data_as_csv()
+
+    def export_data_as_csv(self):
+        ch = input("Save data to csv? (y/n): ")
+        if ch == "y":
+            data_dir = os.path.join(self.package_path, 'data')
+            if not os.path.exists(data_dir):
+                os.makedirs(data_dir)
+            csv_file = os.path.join(data_dir, f'{self.racecar_version}_sys_id_data.csv')
+            with open(csv_file, 'w') as file:
+                writer = csv.writer(file)
+                writer.writerow(['speed_x', 'speed_y', 'omega', 'steering_angle'])
+                for row in self.dataset:
+                    writer.writerow(row)
+            self.get_logger().info("Exported to CSV successfully")
+    
+    def loop(self):
+        while rclpy.ok():
+            self.get_logger().info("Collecting Data")
+            self.collect_data()
+            self.file.close()
+            rclpy.shutdown()
+            self.rate.sleep()
+
 def main(args=None):
     rclpy.init(args=args)
     node = JetsonDataLogger()
-    rclpy.spin(node)
-    node.file.close()
-    node.destroy_node()
-    rclpy.shutdown()
+    node.loop()
 
 if __name__ == '__main__':
     main()
