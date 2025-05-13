@@ -23,11 +23,21 @@ class JetsonSysID():
         '''self.data_duration = self.nn_params['data_collection_duration']
         self.timesteps = self.data_duration * self.rate'''
         self.file = open("src/sys_id_py/jetson_training_data.csv", 'r')
+        self.v_x = np.array([])
+        self.v_y = np.array([])
+        self.steering = np.array([])
+        self.omega = np.array([])
+
         next(self.file) #Skips header row
         for lines in self.file:
-            self.dataset = np.append(self.dataset, lines)       
+            print(lines)
+            self.v_x = np.append(self.v_x, lines[0])  
+            self.v_y = np.append(self.v_y, lines[1]) 
+            self.steering = np.append(self.v_x, lines[2]) 
+            self.omega = np.append(self.v_x, lines[3])      
         #print(speed_x.reshape(-1,1))
-        #print(self.dataset.shape)
+        self.dataset = np.array([self.v_x, self.v_y, self.steering, self.omega]).T
+        print(self.dataset)
 
     def load_parameters(self):
         yaml_file = os.path.join('src/sys_id_py/params/nn_params.yaml')
