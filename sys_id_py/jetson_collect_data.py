@@ -15,16 +15,14 @@ class JetsonDataLogger(Node):
     def __init__(self):
         super().__init__('data_logger')
         rospack = rospkg.RosPack()
-        self.package_path = rospack.get_path('sys_id_py')
+        #self.package_path = rospack.get_path('sys_id_py')
         self.racecar_version = "JETSON"
         self.file = open(f'{self.racecar_version}_training_data.csv', 'w', newline='')
         self.writer = csv.writer(self.file)
         self.writer.writerow(['speed_x', 'speed_y', 'omega', 'steering_angle'])
-
+        self.load_parameters()
         self.data_collection_duration = self.nn_params['data_collection_duration']
         self.rate = 40
-
-        self.load_parameters()
         self.storage_setup()
 
         self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
@@ -69,7 +67,7 @@ class JetsonDataLogger(Node):
     def export_data_as_csv(self):
         ch = input("Save data to csv? (y/n): ")
         if ch == "y":
-            data_dir = os.path.join(self.package_path, 'data')
+            data_dir = os.path.join('src/sys_id_py', 'data')
             if not os.path.exists(data_dir):
                 os.makedirs(data_dir)
             csv_file = os.path.join(data_dir, f'{self.racecar_version}_sys_id_data.csv')

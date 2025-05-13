@@ -17,7 +17,7 @@ class sys_id_for_jetson(Node):
         super().__init__('data_logger') 
         self.racecar_version = 'JETSON'
         rospack = rospkg.RosPack()
-        self.package_path = rospack.get_path('on_track_sys_id')
+        self.package_path = rospack.get_path('sys_id_py')
         self.plot_model = True
         self.load_parameters()
         self.storage_setup()
