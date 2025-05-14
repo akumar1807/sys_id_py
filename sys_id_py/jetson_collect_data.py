@@ -80,12 +80,12 @@ class JetsonDataLogger(Node):
     
     def loop(self):
         while rclpy.ok():
-            #self.get_logger().info("Collecting Data")
             self.collect_data()
             print(self.counter)
             if self.counter == self.timesteps + 1:
                 self.export_data_as_csv()
                 self.file.close()
+                self.destroy_node()
                 rclpy.shutdown()
 
 def main(args=None):
