@@ -1,29 +1,24 @@
 import rclpy
 from rclpy.node import Node
-import rospkg
 import csv
 import yaml
 import os
 import numpy as np
-from std_msgs.msg import Float32
 from nav_msgs.msg import Odometry
 from ackermann_msgs.msg import AckermannDriveStamped
-from sensor_msgs.msg import Imu
-from geometry_msgs.msg import Twist
 from sys_id_py.train_model import nn_train
 
 class sys_id_for_jetson(Node):
     def __init__(self):
-        super().__init__('data_logger') 
+        super().__init__('ontrack') 
         self.racecar_version = 'JETSON'
-        rospack = rospkg.RosPack()
-        self.package_path = rospack.get_path('sys_id_py')
         self.plot_model = True
+
         self.load_parameters()
-        self.storage_setup()
         self.data_collection_duration = self.nn_params['data_collection_duration']
         self.rate = 40
-
+        self.storage_setup()
+        
         #Subscriptions
         self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
         self.create_subscription(AckermannDriveStamped, '/drive', self.steering_callback, 10)
@@ -37,7 +32,7 @@ class sys_id_for_jetson(Node):
         self.timesteps = self.data_collection_duration*self.rate
         self.dataset = np.zeros((self.timesteps,4))
         self.current_state = np.zeros(4)
-        self.count = 0
+        self.counter = 0
 
     def odom_callback(self, msg):
         self.current_state[0] = msg.twist.twist.linear.x
@@ -52,12 +47,10 @@ class sys_id_for_jetson(Node):
     def export_data_as_csv(self):
         ch = input("Save data to csv? (y/n): ")
         if ch == "y":
-            data_dir = os.path.join(self.package_path, 'data')
+            data_dir = os.path.join('src/sys_id_py', 'data')
             if not os.path.exists(data_dir):
                 os.makedirs(data_dir)
-            
             csv_file = os.path.join(data_dir, f'{self.racecar_version}_sys_id_data.csv')
-
             with open(csv_file, 'w') as file:
                 writer = csv.writer(file)
                 writer.writerow(['speed_x', 'speed_y', 'omega', 'steering_angle'])
@@ -95,7 +88,6 @@ class sys_id_for_jetson(Node):
                 self.export_data_as_csv()
                 self.get_logger().info("Training completed. Shutting down...")
                 rclpy.shutdown()
-            self.rate.sleep()
 
 #_main_
 sys_id = sys_id_for_jetson()
