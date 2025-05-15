@@ -25,7 +25,8 @@ setup(
             'with_data_sys_id = sys_id_py.with_data_sys_id:main',
             'jetson_collect = sys_id_py.jetson_collect_data:main',
             'jetson_sys_id = sys_id_py.jetson_sys_id:main',
-            'ontrack = sys_id_py.on_track_jetson:main'
+            'ontrack = sys_id_py.on_track_jetson:main',
+            'jet_col = sys_id_py.collect_data_jetson:main'
         ],
     },
 )
