@@ -48,13 +48,21 @@ class JetsonDataLogger(Node):
             Adds the current state to the data array and updates the counter.
             Closes the progress bar and logs a message if data collection is complete.
             """
-            if self.current_state[0] > 0.0: # Only collect data when the car is moving
+            self.get_logger().info("Data Collection Started")
+            
+            '''if self.current_state[0] > 0.0: # Only collect data when the car is moving
                 self.data = np.roll(self.data, -1, axis=0)
                 self.data[-1] = self.current_state
                 self.counter += 1
             if self.counter == self.timesteps + 1:
-                self.get_logger().info("Data collection completed.")
-                
+                self.get_logger().info("Data collection completed.")'''
+            
+            while self.counter <= self.timesteps:
+                if self.current_state[0] > 0.0: # Only collect data when the car is moving
+                    self.data = np.roll(self.data, -1, axis=0)
+                    self.data[-1] = self.current_state
+                    self.counter += 1
+            self.get_logger().info("Data collection completed.")
 
     def export_data_as_csv(self):
         ch = input("Save data to csv? (y/n): ")
